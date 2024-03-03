@@ -1,4 +1,4 @@
-class Letter {
+export class Letter {
   // private variables to prevent being overwritten after initilizataion with bad values
   #value: string | undefined;
   #possibleLetters: string[];
@@ -64,7 +64,7 @@ class Letter {
     const hasNumbers = /\d/.test(arr.join(""));
 
     if (hasDuplicates || hasWords || hasNumbers) {
-      throw new Error("Invlaid array passed");
+      throw new Error("Invalid array passed");
     } else if (this.#value !== undefined) {
       console.warn(
         `Letter value already set to "${
