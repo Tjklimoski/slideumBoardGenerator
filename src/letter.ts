@@ -27,6 +27,17 @@ class Letter {
     this.#value = undefined;
   }
 
+  assignValue_Random(): void {
+    this.#value =
+      this.#possibleLetters[
+        Math.floor(Math.random() * this.possibleLettersCount)
+      ];
+  }
+
+  assignValue_Ordered(): void {
+    this.#value = this.#possibleLetters[0];
+  }
+
   get value(): string | undefined {
     return this.#value;
   }
