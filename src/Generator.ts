@@ -61,12 +61,27 @@ export class Generator {
   }
 
   #getLetterWithLowestPossibleLettersCount(): Letter {
-    // loop over this.#board.board.flat() and check the letter.possibleLettersCount property
+    // array of letters with the lowest count (counts match if more than 1 letter in array)
+    const lowestLetters: Letter[] = this.#board.board
+      .flat()
+      // sort will mutate the array created by .flat(). Will not mutate this.#board.board.
+      .sort((a, b) => a.possibleLettersCount - b.possibleLettersCount)
+      .reduce((array: Letter[], letter, i) => {
+        if (i === 0 || letter.value === array[0].value) array.push(letter);
+        return array;
+      }, []);
+
+    const letter =
+      lowestLetters[Math.floor(Math.random() * lowestLetters.length)];
+
+    if (!letter) throw new Error("No letter with lowest count found");
+
+    return letter;
   }
 
   #assignValue(letter: Letter) {}
 
-  #handleDuplicateWord() {
+  #checkForDuplicateWord(): boolean {
     this.#board.hasDuplicateWord;
   }
 
