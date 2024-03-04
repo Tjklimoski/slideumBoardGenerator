@@ -24,9 +24,9 @@ export class Generator {
   async getBoard(): Promise<ResultMatrix> {
     // if there's an unresolved value in board, call generate
     if (this.#board.board.flat().some(letter => letter.value === undefined)) {
-      await this.generate();
+      return await this.generate();
     }
-    const result = this.#board.board.map(row =>
+    const result: ResultMatrix = this.#board.board.map(row =>
       // passing as string to TS since it doesn't see the type check for undefined above
       row.map(letter => letter.value as string)
     );
@@ -39,7 +39,10 @@ export class Generator {
     let done = false;
 
     while (!done) {
-      // Check for a possibleLetterCount of 0
+      if (this.#board.hasPossibleLettersCountOfZero) {
+        this.#handleCountOfZero();
+        continue;
+      }
       const selectedLetter = this.#selectLetter();
       this.#assignValue(selectedLetter);
       if (this.#board.hasDuplicateWord) {
@@ -57,11 +60,10 @@ export class Generator {
 
   #selectLetter(): Letter {
     // method to select which letter on the board to assign a value to next
-    const lastMoveInHistory: string | undefined =
-      this.#history[this.#history.length - 1];
-    if (lastMoveInHistory !== undefined) {
-      const { rowIndex, colIndex } =
-        this.#validateAndConvertCoord(lastMoveInHistory);
+    if (this.#lastMoveInHistory !== undefined) {
+      const { rowIndex, colIndex } = this.#validateAndConvertCoord(
+        this.#lastMoveInHistory
+      );
       const letter = this.#board.board[rowIndex][colIndex];
       // If last letter in history still has an undefined value, select it again
       if (letter.value === undefined) return letter;
@@ -90,7 +92,7 @@ export class Generator {
     return letter;
   }
 
-  #assignValue(letter: Letter): void {
+  #assignValue(letter: Letter) {
     letter.assignValue_Random();
     if (this.#history.includes(letter.coord)) return;
     this.#history.push(letter.coord);
@@ -115,11 +117,19 @@ export class Generator {
     // use promises and promise.all() to run binary search in parallel
   }
 
-  #handleCountOf0() {}
+  #handleCountOfZero() {
+    // check if our last letter in history is a letter with a count of zero
+    // if true, pop it off history (if it's true, that means the letter.value is undefined. don't need to revert the letter).
+    // revert last letter in history.
+    // const { rowIndex, colIndex } =
+  }
 
   #revert() {
+    if (this.#lastMoveInHistory === undefined)
+      throw new Error("No move in history to revert");
+
     const { rowIndex, colIndex } = this.#validateAndConvertCoord(
-      this.#history[this.#history.length - 1]
+      this.#lastMoveInHistory
     );
     this.#board.board[rowIndex][colIndex].revert();
   }
@@ -139,5 +149,9 @@ export class Generator {
       );
 
     return { coord, rowIndex, colIndex };
+  }
+
+  get #lastMoveInHistory(): string | undefined {
+    return this.#history[this.#history.length - 1];
   }
 }
