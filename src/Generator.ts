@@ -3,6 +3,12 @@ import { Board } from "./Board";
 
 type ResultMatrix = string[][];
 
+interface convertedCoord {
+  coord: string;
+  rowIndex: number;
+  colIndex: number;
+}
+
 export class Generator {
   // wordsInBoard is a getter function
   #size: number;
@@ -42,6 +48,9 @@ export class Generator {
 
   #selectLetter(): Letter {
     // method to select which letter on the board to assign a value to next
+    const lastMoveInHistory: string | undefined =
+      this.#history[this.#history.length - 1];
+    const coord = this.#validateAndConvertCoord(lastMoveInHistory);
   }
 
   #getLowestPossibleLettersCount(): Letter {
@@ -76,5 +85,22 @@ export class Generator {
     const rowIndex = parseInt(coord[0]);
     const colIndex = parseInt(coord[1]);
     this.#board.board[rowIndex][colIndex].revert();
+  }
+
+  #validateAndConvertCoord(coord: string): convertedCoord {
+    if (coord.length !== 2 || isNaN(parseInt(coord)))
+      throw new Error("coord must be 2 numerical digits long");
+
+    const rowIndex = parseInt(coord[0]);
+    const colIndex = parseInt(coord[1]);
+
+    if (rowIndex >= this.#size || colIndex >= this.#size)
+      throw new Error(
+        `coordinate values [${rowIndex}, ${colIndex}] can not be greater than board size ${
+          this.#size
+        }`
+      );
+
+    return { coord, rowIndex, colIndex };
   }
 }
