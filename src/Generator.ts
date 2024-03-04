@@ -39,6 +39,7 @@ export class Generator {
     let done = false;
 
     while (!done) {
+      // Check for a possibleLetterCount of 0
       const selectedLetter = this.#selectLetter();
       this.#assignValue(selectedLetter);
       if (this.#board.hasDuplicateWord) {
@@ -47,9 +48,10 @@ export class Generator {
         continue;
       }
       done = this.#isComplete();
-      // steps
+      // calculate possible letters for all letters with undefined values
     }
-    // getBoard is the baord with just the values, no Letter objs.
+
+    // getBoard is the board with just the values, no Letter objects.
     return await this.getBoard();
   }
 
@@ -64,25 +66,27 @@ export class Generator {
       // If last letter in history still has an undefined value, select it again
       if (letter.value === undefined) return letter;
     }
-    return this.#getLetterWithLowestPossibleLettersCount();
+    return this.#selectRandomLetterFrom(
+      this.#lettersWithLowestPossibleLettersCount
+    );
   }
 
-  #getLetterWithLowestPossibleLettersCount(): Letter {
-    // array of letters with the lowest count (counts match if more than 1 letter in array)
-    const lowestLetters: Letter[] = this.#board.board
-      .flat()
-      // sort will mutate the array created by .flat(). Will not mutate this.#board.board.
-      .sort((a, b) => a.possibleLettersCount - b.possibleLettersCount)
-      .reduce((array: Letter[], letter, i) => {
-        if (i === 0 || letter.value === array[0].value) array.push(letter);
-        return array;
-      }, []);
+  get #lettersWithLowestPossibleLettersCount(): Letter[] {
+    return (
+      this.#board.board
+        .flat()
+        // sort will mutate the array created by .flat(). Will not mutate this.#board.board
+        .sort((a, b) => a.possibleLettersCount - b.possibleLettersCount)
+        .reduce((array: Letter[], letter, i) => {
+          if (i === 0 || letter.value === array[0].value) array.push(letter);
+          return array;
+        }, [])
+    );
+  }
 
-    const letter =
-      lowestLetters[Math.floor(Math.random() * lowestLetters.length)];
-
-    if (!letter) throw new Error("No letter with lowest count found");
-
+  #selectRandomLetterFrom(letterArray: Letter[]): Letter {
+    const letter = letterArray[Math.floor(Math.random() * letterArray.length)];
+    if (!letter) throw new Error("No letter found in array passed");
     return letter;
   }
 
