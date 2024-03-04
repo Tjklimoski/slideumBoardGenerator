@@ -48,4 +48,11 @@ export class Generator {
 
     return words;
   }
+
+  get hasDuplicateWord(): boolean {
+    const words = this.wordsInBoard;
+    return words.some(
+      word => words.filter(filterWord => filterWord === word).length > 1
+    );
+  }
 }
