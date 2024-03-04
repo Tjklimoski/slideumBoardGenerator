@@ -40,7 +40,7 @@ export class Board {
     return this.#board;
   }
 
-  allWordsOnBoard(): AllWords {
+  allWords(): AllWords {
     const letters: string[] = this.#board
       .flat()
       .map(letter => (letter.value ? letter.value : " "));
@@ -70,7 +70,7 @@ export class Board {
   }
 
   get getCompletedWords(): string[] {
-    const allWords = this.allWordsOnBoard();
+    const allWords = this.allWords();
 
     return [...allWords.rows, ...allWords.cols].filter(
       word => word.trim().length === this.#boardSize
@@ -98,7 +98,7 @@ export class Board {
         }`
       );
 
-    const allWords = this.allWordsOnBoard();
+    const allWords = this.allWords();
 
     return {
       row: allWords.rows[rowIndex],
