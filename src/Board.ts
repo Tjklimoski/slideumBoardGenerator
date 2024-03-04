@@ -2,18 +2,19 @@ import { Letter } from "./letter.js";
 
 type BoardRow = [Letter, Letter, Letter];
 
-type Board = [BoardRow, BoardRow, BoardRow];
+type BoardType = [BoardRow, BoardRow, BoardRow];
 
-export class Generator {
-  #board: Board;
-  #boardSize: number = 3;
+export class Board {
+  #board: BoardType;
+  #boardSize: number;
 
-  constructor() {
+  constructor(size: number = 3) {
+    this.#boardSize = size;
     this.#board = this.#createBoard();
   }
 
   #createBoard() {
-    const board: Board = [null!, null!, null!];
+    const board: BoardType = [null!, null!, null!];
     for (let rowIndex = 0; rowIndex < this.#boardSize; rowIndex++) {
       const row: BoardRow = [null!, null!, null!];
       for (let colIndex = 0; colIndex < this.#boardSize; colIndex++) {
@@ -25,7 +26,7 @@ export class Generator {
     return board;
   }
 
-  get board(): Board {
+  get board(): BoardType {
     return this.#board;
   }
 
