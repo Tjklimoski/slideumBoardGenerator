@@ -4,6 +4,11 @@ type BoardRow = [Letter, Letter, Letter];
 
 type BoardType = [BoardRow, BoardRow, BoardRow];
 
+interface AllWords {
+  rows: string[];
+  cols: string[];
+}
+
 export class Board {
   #board: BoardType;
   #boardSize: number;
@@ -30,30 +35,49 @@ export class Board {
     return this.#board;
   }
 
-  get wordsInBoard(): string[] {
-    const words: string[] = [];
+  allWordsOnBoard(): AllWords {
+    const letters: string[] = this.#board
+      .flat()
+      .map(letter => (letter.value ? letter.value : " "));
+    const words: AllWords = {
+      rows: [],
+      cols: [],
+    };
 
     for (let i = 0; i < this.#boardSize; i++) {
-      const rowWord = this.#board[i].map(letter => letter.value).join("");
-      let colWord = "";
+      const startingRowIndex = i * 3;
+      const startingColIndex = i;
 
-      // loop through rows to get each letter in a colWord
-      for (const row of this.#board) {
-        const letter = row.map(letter => letter.value)[i];
-        if (letter) colWord += letter;
-      }
+      let rowWord =
+        letters[startingRowIndex] +
+        letters[startingRowIndex + 1] +
+        letters[startingRowIndex + 2];
+      let colWord =
+        letters[startingColIndex] +
+        letters[startingColIndex + 1 * this.#boardSize] +
+        letters[startingColIndex + 2 * this.#boardSize];
 
-      if (rowWord.length === this.#boardSize) words.push(rowWord);
-      if (colWord.length === this.#boardSize) words.push(colWord);
+      words.rows[i] = rowWord;
+      words.cols[i] = colWord;
     }
 
     return words;
   }
 
+  get getCompletedWords(): string[] {
+    const allWords = this.allWordsOnBoard();
+
+    return [...allWords.rows, ...allWords.cols].filter(
+      word => word.trim().length === this.#boardSize
+    );
+  }
+
   get hasDuplicateWord(): boolean {
-    const words = this.wordsInBoard;
+    const words = this.getCompletedWords;
     return words.some(
       word => words.filter(filterWord => filterWord === word).length > 1
     );
   }
+
+  get getPartialWords(coord: string): {};
 }
