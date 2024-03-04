@@ -37,8 +37,15 @@ export class Generator {
     // logic to run to generate one board
     // returns a matrix of values.
     let done = false;
+
     while (!done) {
-      // steps
+      const selectedLetter = this.#selectLetter();
+      this.#assignValue(selectedLetter);
+      if (this.#board.hasDuplicateWord) {
+        // revert last letter value assigned, restart loop
+        this.#revert();
+        continue;
+      }
       done = this.#isComplete();
       // steps
     }
@@ -79,11 +86,7 @@ export class Generator {
     return letter;
   }
 
-  #assignValue(letter: Letter) {}
-
-  #checkForDuplicateWord(): boolean {
-    this.#board.hasDuplicateWord;
-  }
+  #assignValue(letter: Letter): void {}
 
   #isComplete(): boolean {
     // check if history length === this.#size**2
@@ -102,10 +105,9 @@ export class Generator {
   }
 
   #revert() {
-    // method to remove the last value set on a letter, and to restart loop
-    const coord = this.#history[this.#history.length - 1];
-    const rowIndex = parseInt(coord[0]);
-    const colIndex = parseInt(coord[1]);
+    const { rowIndex, colIndex } = this.#validateAndConvertCoord(
+      this.#history[this.#history.length - 1]
+    );
     this.#board.board[rowIndex][colIndex].revert();
   }
 
