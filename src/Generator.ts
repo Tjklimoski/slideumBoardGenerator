@@ -118,10 +118,21 @@ export class Generator {
   }
 
   #handleCountOfZero() {
-    // check if our last letter in history is a letter with a count of zero
-    // if true, pop it off history (if it's true, that means the letter.value is undefined. don't need to revert the letter).
-    // revert last letter in history.
-    // const { rowIndex, colIndex } =
+    if (this.#lastMoveInHistory === undefined) {
+      throw new Error("No move in history");
+    }
+
+    const { rowIndex, colIndex } = this.#validateAndConvertCoord(
+      this.#lastMoveInHistory
+    );
+
+    if (this.#board.board[rowIndex][colIndex].possibleLettersCount === 0) {
+      // if conditioln is true, that letter has a value of undefined
+      // only need to remove it from history to revert prior letter
+      this.#history.pop();
+    }
+
+    this.#revert();
   }
 
   #revert() {
@@ -131,6 +142,7 @@ export class Generator {
     const { rowIndex, colIndex } = this.#validateAndConvertCoord(
       this.#lastMoveInHistory
     );
+    // revert method on Letter removes the current value from the possibleLetters array, and sets value to undefined
     this.#board.board[rowIndex][colIndex].revert();
   }
 
