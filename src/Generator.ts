@@ -93,10 +93,16 @@ export class Generator {
   }
 
   #isComplete(): boolean {
-    // check if history length === this.#size**2
-    // check that all tiles have a value
-    // check that this.#board.getCompletedWords.length === this.#size * 2
-    // If all above is true, board is complete. return true
+    // if history length === this.#size**2 AND
+    // all tiles have a value AND
+    // this.#board.getCompletedWords.length === this.#size * 2
+    // the board is complete. return true.
+    if (
+      this.#history.length === this.#size ** 2 &&
+      this.#board.board.flat().every(letter => letter.value !== undefined) &&
+      this.#board.getCompletedWords.length === this.#size * 2
+    )
+      return true;
     return false;
   }
 
