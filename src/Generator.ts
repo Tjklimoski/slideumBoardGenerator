@@ -50,10 +50,17 @@ export class Generator {
     // method to select which letter on the board to assign a value to next
     const lastMoveInHistory: string | undefined =
       this.#history[this.#history.length - 1];
-    const coord = this.#validateAndConvertCoord(lastMoveInHistory);
+    if (lastMoveInHistory !== undefined) {
+      const { rowIndex, colIndex } =
+        this.#validateAndConvertCoord(lastMoveInHistory);
+      const letter = this.#board.board[rowIndex][colIndex];
+      // If last letter in history still has an undefined value, select it again
+      if (letter.value === undefined) return letter;
+    }
+    return this.#getLetterWithLowestPossibleLettersCount();
   }
 
-  #getLowestPossibleLettersCount(): Letter {
+  #getLetterWithLowestPossibleLettersCount(): Letter {
     // loop over this.#board.board.flat() and check the letter.possibleLettersCount property
   }
 
