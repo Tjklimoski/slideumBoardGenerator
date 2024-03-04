@@ -1,6 +1,8 @@
 import type { Letter } from "./Letter";
 import { Board } from "./Board";
 
+type ResultMatrix = string[][];
+
 export class Generator {
   // wordsInBoard is a getter function
   #size: number;
@@ -13,22 +15,29 @@ export class Generator {
     this.#board = new Board(this.#size);
   }
 
-  get getBoard(): matrix {
-    // if there's an undefined letter.value in this.#board, run generate method
-    // else, reduce letters in array to just their values and return new matrix
+  async getBoard(): Promise<ResultMatrix> {
+    // if there's an unresolved value in board, call generate
+    if (this.#board.board.flat().some(letter => letter.value === undefined)) {
+      await this.generate();
+    }
+    const result = this.#board.board.map(row =>
+      // passing as string to TS since it doesn't see the type check for undefined above
+      row.map(letter => letter.value as string)
+    );
+    return result;
   }
 
-  generate() {
+  async generate(): Promise<ResultMatrix> {
     // logic to run to generate one board
     // returns a matrix of values.
-    let isDone = false;
-    while (isDone) {
+    let done = false;
+    while (!done) {
       // steps
-      isDone = this.#isComplete();
+      done = this.#isComplete();
       // steps
     }
     // getBoard is the baord with just the values, no Letter objs.
-    return this.#getBoard;
+    return await this.getBoard();
   }
 
   #selectLetter(): Letter {
