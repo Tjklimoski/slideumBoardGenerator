@@ -86,7 +86,11 @@ export class Generator {
     return letter;
   }
 
-  #assignValue(letter: Letter): void {}
+  #assignValue(letter: Letter): void {
+    letter.assignValue_Random();
+    if (this.#history.includes(letter.coord)) return;
+    this.#history.push(letter.coord);
+  }
 
   #isComplete(): boolean {
     // check if history length === this.#size**2
