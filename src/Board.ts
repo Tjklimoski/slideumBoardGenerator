@@ -1,4 +1,4 @@
-import { Letter } from "./Letter.js";
+import { Letter } from "./Letter";
 
 type BoardRow = [Letter, Letter, Letter];
 
@@ -29,9 +29,9 @@ export class Board {
       const row: BoardRow = [null!, null!, null!];
       for (let colIndex = 0; colIndex < this.#boardSize; colIndex++) {
         const letter = new Letter(`${rowIndex}${colIndex}`);
-        row.push(letter);
+        row[colIndex] = letter;
       }
-      board.push(row);
+      board[rowIndex] = row;
     }
     return board;
   }
@@ -93,7 +93,7 @@ export class Board {
 
     if (rowIndex >= this.#boardSize || colIndex >= this.#boardSize)
       throw new Error(
-        `coordinate values ${rowIndex}, ${colIndex} can not be greater than board size ${
+        `coordinate values [${rowIndex}, ${colIndex}] can not be greater than board size ${
           this.#boardSize
         }`
       );
