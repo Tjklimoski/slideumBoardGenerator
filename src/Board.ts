@@ -84,6 +84,10 @@ export class Board {
     );
   }
 
+  get hasPossibleLettersCountOfZero(): boolean {
+    return this.#board.flat().some(letter => letter.possibleLettersCount === 0);
+  }
+
   getTargetWords(targetCoords: string): TargetWords {
     if (targetCoords.length !== 2 || isNaN(parseInt(targetCoords)))
       throw new Error("coord must be 2 numerical digits long");

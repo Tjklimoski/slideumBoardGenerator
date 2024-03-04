@@ -97,10 +97,7 @@ export class Generator {
   }
 
   #isComplete(): boolean {
-    // if history length === this.#size**2 AND
-    // all tiles have a value AND
-    // this.#board.getCompletedWords.length === this.#size * 2
-    // the board is complete. return true.
+    // if conditions are true, board is complete.
     if (
       this.#history.length === this.#size ** 2 &&
       this.#board.board.flat().every(letter => letter.value !== undefined) &&
@@ -117,6 +114,8 @@ export class Generator {
     // set possibleLetters array based on value of col and row possible letters that match.
     // use promises and promise.all() to run binary search in parallel
   }
+
+  #handleCountOf0() {}
 
   #revert() {
     const { rowIndex, colIndex } = this.#validateAndConvertCoord(
