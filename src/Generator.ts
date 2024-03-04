@@ -1,4 +1,4 @@
-import { Board } from "./Board.js";
+import { Board } from "./Board";
 
 export class Generator {
   // wordsInBoard is a getter function

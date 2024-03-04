@@ -40,7 +40,7 @@ describe("Board Class", () => {
       allWords = board.allWords();
       expect([...allWords.rows, ...allWords.cols][4]).not.toBe("   ");
       expect([...allWords.rows, ...allWords.cols][1]).not.toBe("   ");
-      expect([...allWords.rows, ...allWords.cols][2]).toBe("   ");
+      expect([...allWords.rows, ...allWords.cols][3]).not.toBe("   ");
     });
   });
 
@@ -55,13 +55,10 @@ describe("Board Class", () => {
       board.board[1][1].assignValue_Random();
       board.board[2][1].assignValue_Random();
       expect(board.getCompletedWords.length).toBe(2);
-      const expectedWord = board.board[0][1].value
-        ? board.board[0][1].value
-        : " " + board.board[0][1].value
-        ? board.board[1][1].value
-        : " " + board.board[0][1].value
-        ? board.board[2][1].value
-        : " ";
+      const expectedWord =
+        (board.board[0][1].value ? board.board[0][1].value : " ") +
+        (board.board[0][1].value ? board.board[1][1].value : " ") +
+        (board.board[0][1].value ? board.board[2][1].value : " ");
       expect(board.getCompletedWords).toContain(expectedWord);
     });
   });
@@ -91,13 +88,13 @@ describe("Board Class", () => {
   describe("getTargetWords method", () => {
     test("throws error on invalid coord input", () => {
       const board = new Board();
-      expect(board.getTargetWords("a1")).toThrow(
+      expect(() => board.getTargetWords("a1")).toThrow(
         "coord must be 2 numerical digits long"
       );
-      expect(board.getTargetWords("1")).toThrow(
+      expect(() => board.getTargetWords("1")).toThrow(
         "coord must be 2 numerical digits long"
       );
-      expect(board.getTargetWords("28")).toThrow(
+      expect(() => board.getTargetWords("28")).toThrow(
         "coordinate values [2, 8] can not be greater than board size 3"
       );
     });
