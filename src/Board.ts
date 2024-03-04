@@ -9,6 +9,11 @@ interface AllWords {
   cols: string[];
 }
 
+interface TargetWords {
+  row: string;
+  col: string;
+}
+
 export class Board {
   #board: BoardType;
   #boardSize: number;
@@ -79,5 +84,25 @@ export class Board {
     );
   }
 
-  get getPartialWords(coord: string): {};
+  getTargetWords(targetCoords: string): TargetWords {
+    if (targetCoords.length !== 2 || isNaN(parseInt(targetCoords)))
+      throw new Error("coord must be 2 numerical digits long");
+
+    const rowIndex = parseInt(targetCoords[0]);
+    const colIndex = parseInt(targetCoords[1]);
+
+    if (rowIndex >= this.#boardSize || colIndex >= this.#boardSize)
+      throw new Error(
+        `coordinate values ${rowIndex}, ${colIndex} can not be greater than board size ${
+          this.#boardSize
+        }`
+      );
+
+    const allWords = this.allWordsOnBoard();
+
+    return {
+      row: allWords.rows[rowIndex],
+      col: allWords.cols[colIndex],
+    };
+  }
 }
