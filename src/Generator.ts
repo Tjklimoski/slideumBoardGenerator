@@ -109,12 +109,66 @@ export class Generator {
     return false;
   }
 
-  #calculatePossibleLetters() {
-    // for all letters with no value, use this.#board.getTargetWords(coord)
+  async #calculatePossibleLetters() {
+    // break out into own method, letterFinder for clarity:
     // determine dict to use (str.search(/\w/i)) and letter.
     // binary search -- break out into own method for clarity.
-    // set possibleLetters array based on value of col and row possible letters that match.
-    // use promises and promise.all() to run binary search in parallel
+
+    // Get all letters that have an undefined value
+    const LettersToCalculate = this.#board.board
+      .flat()
+      .filter(letter => letter.value === undefined);
+
+    for (let i = 0; i < LettersToCalculate.length; i++) {
+      const letter = LettersToCalculate[i];
+
+      const { row: rowWord, col: colWord } = this.#board.getTargetWords(
+        letter.coord
+      );
+      // this index position should be blank in the coresponding target word
+      const { rowIndex, colIndex } = this.#validateAndConvertCoord(
+        letter.coord
+      );
+
+      const rowLetterFinder = this.#letterFinder(rowWord, rowIndex);
+      const colLetterFinder = this.#letterFinder(colWord, colIndex);
+
+      try {
+        // if a promise finished with an empty set, it would reject.
+        const [rowSet, colSet] = await Promise.all([
+          rowLetterFinder,
+          colLetterFinder,
+        ]);
+
+        const [rowArray, colArray] = [Array(...rowSet), Array(...colSet)];
+        const possibleLetters = rowArray.filter(letter =>
+          colArray.includes(letter)
+        );
+
+        if (possibleLetters.length === 0)
+          throw new Error("No letters shared between rowArray and colArray");
+
+        letter.possibleLetters = possibleLetters;
+      } catch (err) {
+        // a promise finished with an empty set
+        // or no letters shared between rowArray and colArray
+        letter.possibleLetters = [];
+      }
+    }
+  }
+
+  #letterFinder(word: string, index: number): Promise<Set<string>> {
+    // A promise that will return a set of possible letters for the specified index, based on the partial word passed in.
+    return new Promise((res, rej) => {
+      const set: Set<string> = new Set();
+      // select dictionary
+      // loop over dict with matcher, adding letters in index position to set
+
+      // make sure the matcher is considering partial words that have more then 1 letter.
+      // partial word can be " a ", "a  ", "  a", "ab ", " ab", "a b"
+      // The index should always be a blank space in the partial word
+      res(set);
+    });
   }
 
   #handleCountOfZero() {
