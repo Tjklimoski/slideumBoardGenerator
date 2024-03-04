@@ -85,6 +85,23 @@ describe("Board Class", () => {
     });
   });
 
+  describe("get hasPossibleLettersCountOfZero", () => {
+    test("returns false when no letter has a count of 0", () => {
+      const board = new Board();
+      expect(board.hasPossibleLettersCountOfZero).toBe(false);
+      board.board[1][2].possibleLetters = ["c"];
+      board.board[0][0].possibleLetters = ["a"];
+      expect(board.hasPossibleLettersCountOfZero).toBe(false);
+    });
+    test("returns true when at least 1 letter has a count of 0", () => {
+      const board = new Board();
+      board.board[1][2].possibleLetters = [];
+      expect(board.hasPossibleLettersCountOfZero).toBe(true);
+      board.board[0][0].possibleLetters = [];
+      expect(board.hasPossibleLettersCountOfZero).toBe(true);
+    });
+  });
+
   describe("getTargetWords method", () => {
     test("throws error on invalid coord input", () => {
       const board = new Board();
