@@ -53,7 +53,7 @@ export class Generator {
         continue;
       }
       done = this.#isComplete();
-      // calculate possible letters for all letters with undefined values
+      await this.#calculatePossibleLetters();
     }
 
     // getBoard is the board with just the values, no Letter objects.
@@ -112,10 +112,6 @@ export class Generator {
   }
 
   async #calculatePossibleLetters() {
-    // break out into own method, letterFinder for clarity:
-    // determine dict to use (str.search(/\w/i)) and letter.
-    // binary search -- break out into own method for clarity.
-
     // Get all letters that have an undefined value
     const LettersToCalculate = this.#board.board
       .flat()
