@@ -1,7 +1,7 @@
-import type { Letter } from "./Letter";
-import { Board } from "./Board";
-import dict from "./dict/dict";
-import type { Dictionary, IndexedDict } from "./dict/dict";
+import type { Letter } from "./Letter.js";
+import { Board } from "./Board.js";
+import dict from "./dict/dict.js";
+import type { Dictionary, IndexedDict } from "./dict/dict.js";
 
 type ResultMatrix = string[][];
 
@@ -39,14 +39,14 @@ export class Generator {
     // logic to run to generate one board
     // returns a matrix of values.
     let done = false;
+    let count = 0;
 
     while (!done) {
       if (this.#board.hasPossibleLettersCountOfZero) {
         this.#handleCountOfZero();
         continue;
       }
-      const selectedLetter = this.#selectLetter();
-      this.#assignValue(selectedLetter);
+      this.#assignValue(this.#selectLetter());
       if (this.#board.hasDuplicateWord) {
         // revert last letter value assigned, restart loop
         this.#revert();
@@ -58,6 +58,9 @@ export class Generator {
 
     // getBoard is the board with just the values, no Letter objects.
     return await this.getBoard();
+    // return this.#board.board.map(row =>
+    //   row.map(letter => letter.value as string)
+    // );
   }
 
   #selectLetter(): Letter {
@@ -164,6 +167,15 @@ export class Generator {
       if (word[index] !== " ") rej("Incorrect index or word passed");
 
       const firstLetterIndex = word.search(/\w/i);
+      // firstLetterIndex set to -1 when no letters in word:
+      if (firstLetterIndex === -1) {
+        // add full alphabet to set and resolve promise
+        "abcdefghijklmnopqrstuvwxyz"
+          .split("")
+          .forEach(letter => set.add(letter));
+        res(set);
+      }
+
       if (firstLetterIndex >= this.#size) rej("Incorrrect word passed");
       const dictPositionKey = `_${firstLetterIndex}` as keyof Dictionary;
       const dictLetterKey = word[
@@ -184,6 +196,8 @@ export class Generator {
       dict[dictPositionKey][dictLetterKey].forEach(word => {
         if (word.match(regexWord)) set.add(word[index].toLowerCase());
       });
+
+      console.log("SET: ", set);
 
       if (set.size > 0) {
         res(set);
