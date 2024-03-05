@@ -7,7 +7,7 @@
   "scripts": {
     "test": "jest",
     "build": "tsc",
-    "start": "tsc && node dist/index.js"
+    "start": "tsc && node dist/src/index.js"
   },
   "author": "TJ Klimoski",
   "license": "ISC",
