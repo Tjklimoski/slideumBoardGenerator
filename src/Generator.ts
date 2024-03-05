@@ -12,7 +12,6 @@ interface convertedCoord {
 }
 
 export class Generator {
-  // wordsInBoard is a getter function
   #size: number;
   #history: string[];
   #board: Board;
@@ -28,16 +27,14 @@ export class Generator {
     if (this.#board.board.flat().some(letter => letter.value === undefined)) {
       return await this.generate();
     }
-    const result: ResultMatrix = this.#board.board.map(row =>
-      // passing as string to TS since it doesn't see the type check for undefined above
+
+    return this.#board.board.map(row =>
+      // passing "as string" to TS since it doesn't see the type check for undefined above
       row.map(letter => letter.value as string)
     );
-    return result;
   }
 
   async generate(): Promise<ResultMatrix> {
-    // logic to run to generate one board
-    // returns a matrix of values.
     let done = false;
     let count = 0;
 
@@ -55,7 +52,6 @@ export class Generator {
       }
       this.#assignValue(this.#selectLetter());
       if (this.#board.hasDuplicateWord) {
-        // revert last letter value assigned, restart loop
         this.#revert();
         continue;
       }
@@ -63,12 +59,11 @@ export class Generator {
       await this.#calculatePossibleLetters();
     }
 
-    // getBoard is the board with just the values, no Letter objects.
+    // returns board with just the values, no Letter objects:
     return await this.getBoard();
   }
 
   #selectLetter(): Letter {
-    // method to select which letter on the board to assign a value to next
     if (this.#lastMoveInHistory !== undefined) {
       const { rowIndex, colIndex } = this.#validateAndConvertCoord(
         this.#lastMoveInHistory
@@ -83,21 +78,18 @@ export class Generator {
   }
 
   get #lettersWithLowestPossibleLettersCount(): Letter[] {
-    return (
-      this.#board.board
-        .flat()
-        .filter(letter => letter.value === undefined)
-        // sort will mutate the array created by .flat(). Will not mutate this.#board.board
-        .sort((a, b) => a.possibleLettersCount - b.possibleLettersCount)
-        .reduce((array: Letter[], letter, i) => {
-          if (
-            i === 0 ||
-            letter.possibleLettersCount === array[0].possibleLettersCount
-          )
-            array.push(letter);
-          return array;
-        }, [])
-    );
+    return this.#board.board
+      .flat()
+      .filter(letter => letter.value === undefined)
+      .sort((a, b) => a.possibleLettersCount - b.possibleLettersCount)
+      .reduce((array: Letter[], letter, i) => {
+        if (
+          i === 0 ||
+          letter.possibleLettersCount === array[0].possibleLettersCount
+        )
+          array.push(letter);
+        return array;
+      }, []);
   }
 
   #selectRandomLetterFrom(letterArray: Letter[]): Letter {
@@ -113,7 +105,6 @@ export class Generator {
   }
 
   #isComplete(): boolean {
-    // if conditions are true, board is complete.
     if (
       this.#history.length === this.#size ** 2 &&
       this.#board.board.flat().every(letter => letter.value !== undefined) &&
@@ -124,47 +115,51 @@ export class Generator {
   }
 
   async #calculatePossibleLetters() {
-    // Get all letters that have an undefined value
-    const LettersToCalculate = this.#board.board
+    const undefinedLetters = this.#board.board
       .flat()
       .filter(letter => letter.value === undefined);
 
-    for (let i = 0; i < LettersToCalculate.length; i++) {
-      const letter = LettersToCalculate[i];
+    for (let i = 0; i < undefinedLetters.length; i++) {
+      const letter = undefinedLetters[i];
 
       const { row: rowWord, col: colWord } = this.#board.getTargetWords(
         letter.coord
       );
-      // this index position should be blank in the coresponding target word
       const { rowIndex, colIndex } = this.#validateAndConvertCoord(
         letter.coord
       );
 
-      // rowWord needs the letters in the COLUMNS index position
+      // rowWord needs the letters in the COL index position
       // colWord needs the letters in the ROW index position
       const rowLetterFinder = this.#letterFinder(rowWord, colIndex);
       const colLetterFinder = this.#letterFinder(colWord, rowIndex);
 
+      let possibleLetters: string[] = [];
+
       try {
-        // if a promise finished with an empty set, it would reject.
+        // if a promise finishes with an empty set, it rejects
         const [rowSet, colSet] = await Promise.all([
           rowLetterFinder,
           colLetterFinder,
         ]);
 
         const [rowArray, colArray] = [Array(...rowSet), Array(...colSet)];
-        const possibleLetters = rowArray.filter(letter =>
+        const sharedLetters = rowArray.filter(letter =>
           colArray.includes(letter)
         );
 
-        if (possibleLetters.length === 0)
+        if (sharedLetters.length === 0)
           throw new Error("No letters shared between rowArray and colArray");
 
-        letter.possibleLetters = possibleLetters;
+        possibleLetters = sharedLetters;
       } catch (err) {
-        // a promise finished with an empty set
-        // or no letters shared between rowArray and colArray
-        letter.possibleLetters = [];
+        if (err instanceof Error) {
+          // letterFinder finished with an empty set and rejected OR
+          // there were no shared letters between to col word and row word
+          console.warn(err.message);
+        }
+      } finally {
+        letter.possibleLetters = possibleLetters;
       }
     }
   }
@@ -175,27 +170,29 @@ export class Generator {
       // using Set to prevent duplicate letters
       const set: Set<string> = new Set();
 
-      if (word[index] !== " ") rej("Incorrect index or word passed");
+      if (word[index] !== " ") rej(new Error("Incorrect index or word passed"));
 
       const firstLetterIndex = word.search(/\w/i);
-      // firstLetterIndex set to -1 when no letters in word:
+      // firstLetterIndex set to -1 when no letters in word. ex: "   "
+      // add full alphabet to set and resolve promise:
       if (firstLetterIndex === -1) {
-        // add full alphabet to set and resolve promise
         "abcdefghijklmnopqrstuvwxyz"
           .split("")
           .forEach(letter => set.add(letter));
         res(set);
       }
 
-      if (firstLetterIndex >= this.#size) rej("Incorrrect word passed");
+      if (firstLetterIndex >= this.#size)
+        rej(new Error("Incorrrect word passed"));
       const dictPositionKey = `_${firstLetterIndex}` as keyof Dictionary;
       const dictLetterKey = word[
         firstLetterIndex
       ].toLowerCase() as keyof IndexedDict;
 
       // build regex string for matcher.
-      // " " = \w{1} -- \b at end to only match full words.
-      // /i for case insensitive
+      // " " = \w{1} -- match any letter that's 1 ch long
+      // \b -- placed at end, to only match full words.
+      // /i -- flag for case insensitive
       // "  a" --> /\w{1}\w{1}a\b/i
       // "ba " --> /ba\w{1}\b/i
       const regexWord = new RegExp(
@@ -211,24 +208,24 @@ export class Generator {
       if (set.size > 0) {
         res(set);
       } else {
-        rej(`No matches found for partial word ${word}`);
+        rej(new Error(`No matches found for partial word ${word}`));
       }
     });
   }
 
   #handleCountOfZero() {
+    // If last move in history has a zero count, remove it from history
     if (this.#lastMoveInHistory === undefined) return;
     const { rowIndex, colIndex } = this.#validateAndConvertCoord(
       this.#lastMoveInHistory
     );
-    // If last move in history has a zero count, remove it from history
     if (this.#board.board[rowIndex][colIndex].possibleLettersCount === 0) {
       this.#history.pop();
     }
 
     // reset ALL letters with a 0 count to a new full alphabet.
     // prevents this.#board.hasPossibleLettersCountOfZero returning true again after restarting loop.
-    // Also prevents lettersWithLowestPossibleLettersCount returning an array of letters with 0 counts when selecting a letter to assign a value to. (which inherently has no letter that can be assigned)
+    // Also prevents lettersWithLowestPossibleLettersCount returning an array of letters with 0 counts when selecting a letter to assign a value to
     this.#lettersWithLowestPossibleLettersCount.forEach(letter => {
       letter.possibleLetters = "abcdefghijklmnopqrstuvwxyz".split("");
     });
@@ -242,7 +239,8 @@ export class Generator {
     const { rowIndex, colIndex } = this.#validateAndConvertCoord(
       this.#lastMoveInHistory
     );
-    // revert method on Letter removes the current value from the possibleLetters array, and sets value to undefined
+
+    // removes the current value from the possibleLetters array, and sets value to undefined
     this.#board.board[rowIndex][colIndex].revert();
   }
 
