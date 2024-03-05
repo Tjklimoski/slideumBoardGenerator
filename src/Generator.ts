@@ -1,5 +1,7 @@
 import type { Letter } from "./Letter";
 import { Board } from "./Board";
+import dict from "./dict/dict";
+import type { Dictionary, IndexedDict } from "./dict/dict";
 
 type ResultMatrix = string[][];
 
@@ -160,14 +162,38 @@ export class Generator {
   #letterFinder(word: string, index: number): Promise<Set<string>> {
     // A promise that will return a set of possible letters for the specified index, based on the partial word passed in.
     return new Promise((res, rej) => {
+      // using Set to prevent duplicate letters
       const set: Set<string> = new Set();
-      // select dictionary
-      // loop over dict with matcher, adding letters in index position to set
 
-      // make sure the matcher is considering partial words that have more then 1 letter.
-      // partial word can be " a ", "a  ", "  a", "ab ", " ab", "a b"
-      // The index should always be a blank space in the partial word
-      res(set);
+      if (word[index] !== " ") rej("Incorrect index or word passed");
+
+      const firstLetterIndex = word.search(/\w/i);
+      if (firstLetterIndex >= this.#size) rej("Incorrrect word passed");
+      const dictPositionKey = `_${firstLetterIndex}` as keyof Dictionary;
+      const dictLetterKey = word[
+        firstLetterIndex
+      ].toLowerCase() as keyof IndexedDict;
+
+      // build regex string for matcher.
+      // " " = \w{1} -- \b at end to only match full words.
+      // /i for case insensitive
+      // "  a" --> /\w{1}\w{1}a\b/i
+      // "ba " --> /ba\w{1}\b/i
+      const regexWord = new RegExp(
+        word.replaceAll(/\s/g, "\\w{1}") + "\\b",
+        "i"
+      );
+
+      // select dictionary and loop over included words
+      dict[dictPositionKey][dictLetterKey].forEach(word => {
+        if (word.match(regexWord)) set.add(word[index].toLowerCase());
+      });
+
+      if (set.size > 0) {
+        res(set);
+      } else {
+        rej(`No matches found for partial word ${word}`);
+      }
     });
   }
 
