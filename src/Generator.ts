@@ -54,13 +54,25 @@ export class Generator {
       }
       done = this.#isComplete();
       await this.#calculatePossibleLetters();
+
+      console.log(
+        "loop end: ",
+        this.#board.board.flat().map(letter => ({
+          value: letter.value,
+          possibleLetters: letter.possibleLetters,
+        }))
+      );
+      count++;
+      if (count > 10) {
+        done = true;
+      }
     }
 
     // getBoard is the board with just the values, no Letter objects.
-    return await this.getBoard();
-    // return this.#board.board.map(row =>
-    //   row.map(letter => letter.value as string)
-    // );
+    // return await this.getBoard();
+    return this.#board.board.map(row =>
+      row.map(letter => letter.value as string)
+    );
   }
 
   #selectLetter(): Letter {
@@ -131,8 +143,10 @@ export class Generator {
         letter.coord
       );
 
-      const rowLetterFinder = this.#letterFinder(rowWord, rowIndex);
-      const colLetterFinder = this.#letterFinder(colWord, colIndex);
+      // rowWord needs the letters in the COLUMNS index position
+      // colWord needs the letters in the ROW index position
+      const rowLetterFinder = this.#letterFinder(rowWord, colIndex);
+      const colLetterFinder = this.#letterFinder(colWord, rowIndex);
 
       try {
         // if a promise finished with an empty set, it would reject.
@@ -196,8 +210,6 @@ export class Generator {
       dict[dictPositionKey][dictLetterKey].forEach(word => {
         if (word.match(regexWord)) set.add(word[index].toLowerCase());
       });
-
-      console.log("SET: ", set);
 
       if (set.size > 0) {
         res(set);
