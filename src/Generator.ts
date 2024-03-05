@@ -42,21 +42,12 @@ export class Generator {
     let count = 0;
 
     while (!done) {
-      count++;
-      console.log("LOOP #: ", count);
-      console.log("HISTORY: ", this.#history);
-      console.log(
-        "BOARD: ",
-        this.#board.board.flat().map(letter => ({
-          value: letter.value,
-          possibleLetters: letter.possibleLetters,
-          count: letter.possibleLettersCount,
-        }))
-      );
-
-      if (count > 10) {
-        done = true;
-      }
+      // ***UNCOMMENT CODE BELOW TO SEE PROGRAM BUILD BOARD STEP BY STEP:***
+      // count++;
+      // console.log(`BOARD @ STEP ${count}:`);
+      // this.#board.board.forEach(row =>
+      //   console.log(row.map(letter => (letter.value ? letter.value : " ")))
+      // );
 
       if (this.#board.hasPossibleLettersCountOfZero) {
         this.#handleCountOfZero();
@@ -73,11 +64,7 @@ export class Generator {
     }
 
     // getBoard is the board with just the values, no Letter objects.
-    // return await this.getBoard();
-    console.log("at return");
-    return this.#board.board.map(row =>
-      row.map(letter => letter.value as string)
-    );
+    return await this.getBoard();
   }
 
   #selectLetter(): Letter {
