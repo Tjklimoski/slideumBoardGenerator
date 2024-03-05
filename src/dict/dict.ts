@@ -1,9 +1,8 @@
-import { all } from "./words.js";
 import { _0 } from "./indexed/position_0.js";
 import { _1 } from "./indexed/position_1.js";
 import { _2 } from "./indexed/position_2.js";
 
-interface indexedDict {
+export interface IndexedDict {
   a: string[];
   b: string[];
   c: string[];
@@ -32,15 +31,13 @@ interface indexedDict {
   z: string[];
 }
 
-interface Dictionary {
-  all: string[];
-  _0: indexedDict;
-  _1: indexedDict;
-  _2: indexedDict;
+export interface Dictionary {
+  _0: IndexedDict;
+  _1: IndexedDict;
+  _2: IndexedDict;
 }
 
 const dict: Dictionary = {
-  all,
   _0,
   _1,
   _2,
