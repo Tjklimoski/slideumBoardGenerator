@@ -42,6 +42,21 @@ export class Generator {
     let count = 0;
 
     while (!done) {
+      console.log(
+        "LOOP START: ",
+        this.#board.board.flat().map(letter => ({
+          value: letter.value,
+          possibleLetters: letter.possibleLetters,
+          count: letter.possibleLettersCount,
+        }))
+      );
+      console.log("HISTORY: ", this.#history);
+      console.log("COUNT: ", count);
+      count++;
+      if (count > 10) {
+        done = true;
+      }
+
       if (this.#board.hasPossibleLettersCountOfZero) {
         this.#handleCountOfZero();
         continue;
@@ -54,22 +69,11 @@ export class Generator {
       }
       done = this.#isComplete();
       await this.#calculatePossibleLetters();
-
-      console.log(
-        "loop end: ",
-        this.#board.board.flat().map(letter => ({
-          value: letter.value,
-          possibleLetters: letter.possibleLetters,
-        }))
-      );
-      count++;
-      if (count > 10) {
-        done = true;
-      }
     }
 
     // getBoard is the board with just the values, no Letter objects.
     // return await this.getBoard();
+    console.log("at return");
     return this.#board.board.map(row =>
       row.map(letter => letter.value as string)
     );
@@ -97,7 +101,11 @@ export class Generator {
         // sort will mutate the array created by .flat(). Will not mutate this.#board.board
         .sort((a, b) => a.possibleLettersCount - b.possibleLettersCount)
         .reduce((array: Letter[], letter, i) => {
-          if (i === 0 || letter.value === array[0].value) array.push(letter);
+          if (
+            i === 0 ||
+            letter.possibleLettersCount === array[0].possibleLettersCount
+          )
+            array.push(letter);
           return array;
         }, [])
     );
