@@ -42,17 +42,18 @@ export class Generator {
     let count = 0;
 
     while (!done) {
+      count++;
+      console.log("LOOP #: ", count);
+      console.log("HISTORY: ", this.#history);
       console.log(
-        "LOOP START: ",
+        "BOARD: ",
         this.#board.board.flat().map(letter => ({
           value: letter.value,
           possibleLetters: letter.possibleLetters,
           count: letter.possibleLettersCount,
         }))
       );
-      console.log("HISTORY: ", this.#history);
-      console.log("COUNT: ", count);
-      count++;
+
       if (count > 10) {
         done = true;
       }
@@ -98,6 +99,7 @@ export class Generator {
     return (
       this.#board.board
         .flat()
+        .filter(letter => letter.value === undefined)
         // sort will mutate the array created by .flat(). Will not mutate this.#board.board
         .sort((a, b) => a.possibleLettersCount - b.possibleLettersCount)
         .reduce((array: Letter[], letter, i) => {
