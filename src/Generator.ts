@@ -230,26 +230,27 @@ export class Generator {
   }
 
   #handleCountOfZero() {
-    if (this.#lastMoveInHistory === undefined) {
-      throw new Error("No move in history");
-    }
-
+    if (this.#lastMoveInHistory === undefined) return;
     const { rowIndex, colIndex } = this.#validateAndConvertCoord(
       this.#lastMoveInHistory
     );
-
+    // If last move in history has a zero count, remove it from history
     if (this.#board.board[rowIndex][colIndex].possibleLettersCount === 0) {
-      // if conditioln is true, that letter has a value of undefined
-      // only need to remove it from history to revert prior letter
       this.#history.pop();
     }
+
+    // reset ALL letters with a 0 count to a new full alphabet.
+    // prevents this.#board.hasPossibleLettersCountOfZero returning true again after restarting loop.
+    // Also prevents lettersWithLowestPossibleLettersCount returning an array of letters with 0 counts when selecting a letter to assign a value to. (which inherently has no letter that can be assigned)
+    this.#lettersWithLowestPossibleLettersCount.forEach(letter => {
+      letter.possibleLetters = "abcdefghijklmnopqrstuvwxyz".split("");
+    });
 
     this.#revert();
   }
 
   #revert() {
-    if (this.#lastMoveInHistory === undefined)
-      throw new Error("No move in history to revert");
+    if (this.#lastMoveInHistory === undefined) return;
 
     const { rowIndex, colIndex } = this.#validateAndConvertCoord(
       this.#lastMoveInHistory
