@@ -41,26 +41,23 @@ export class Board {
   }
 
   allWords(): AllWords {
-    const letters: string[] = this.#board
-      .flat()
-      .map(letter => (letter.value ? letter.value : " "));
+    const letters: Letter[] = this.#board.flat();
     const words: AllWords = {
       rows: [],
       cols: [],
     };
 
     for (let i = 0; i < this.#boardSize; i++) {
-      const startingRowIndex = i * 3;
+      const startingRowIndex = i * this.#boardSize;
       const startingColIndex = i;
 
-      let rowWord =
-        letters[startingRowIndex] +
-        letters[startingRowIndex + 1] +
-        letters[startingRowIndex + 2];
-      let colWord =
-        letters[startingColIndex] +
-        letters[startingColIndex + 1 * this.#boardSize] +
-        letters[startingColIndex + 2 * this.#boardSize];
+      let rowWord = "";
+      let colWord = "";
+
+      for (let j = 0; j < this.#boardSize; j++) {
+        rowWord += letters[startingRowIndex + j].value ?? " ";
+        colWord += letters[startingColIndex + j * this.#boardSize].value ?? " ";
+      }
 
       words.rows[i] = rowWord;
       words.cols[i] = colWord;
