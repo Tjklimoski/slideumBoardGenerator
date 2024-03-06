@@ -3,7 +3,7 @@ import { Board } from "./Board";
 import dict from "./dict/dict";
 import type { Dictionary, IndexedDict } from "./dict/dict";
 
-type ResultMatrix = string[][];
+export type ResultMatrix = string[][];
 
 interface convertedCoord {
   coord: string;
@@ -25,7 +25,7 @@ export class Generator {
   async getBoard(): Promise<ResultMatrix> {
     // if there's an unresolved value in board, call generate
     if (this.#board.board.flat().some(letter => letter.value === undefined)) {
-      return await this.generate();
+      await this.generate();
     }
 
     return this.#board.board.map(row =>
@@ -153,11 +153,9 @@ export class Generator {
 
         possibleLetters = sharedLetters;
       } catch (err) {
-        if (err instanceof Error) {
-          // letterFinder finished with an empty set and rejected OR
-          // there were no shared letters between to col word and row word
-          console.warn(err.message);
-        }
+        // NON CRITICAL ERRORS, NO NEED TO RETHROW OR HANDLE
+        // letterFinder finished with an empty set and rejected OR
+        // there were no shared letters between to col word and row word
       } finally {
         letter.possibleLetters = possibleLetters;
       }
@@ -263,5 +261,9 @@ export class Generator {
 
   get #lastMoveInHistory(): string | undefined {
     return this.#history[this.#history.length - 1];
+  }
+
+  get boardSize(): number {
+    return this.#size;
   }
 }
