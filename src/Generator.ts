@@ -64,13 +64,13 @@ export class Generator {
   }
 
   #selectLetter(): Letter {
-    if (this.#lastMoveInHistory !== undefined) {
+    if (this.#lastMoveInHistory) {
       const { rowIndex, colIndex } = this.#validateAndConvertCoord(
         this.#lastMoveInHistory
       );
       const letter = this.#board.board[rowIndex][colIndex];
       // If last letter in history still has an undefined value, select it again
-      if (letter.value === undefined) return letter;
+      if (!letter.value) return letter;
     }
     return this.#selectRandomLetterFrom(
       this.#lettersWithLowestPossibleLettersCount
@@ -78,18 +78,23 @@ export class Generator {
   }
 
   get #lettersWithLowestPossibleLettersCount(): Letter[] {
-    return this.#board.board
-      .flat()
-      .filter(letter => letter.value === undefined)
-      .sort((a, b) => a.possibleLettersCount - b.possibleLettersCount)
-      .reduce((array: Letter[], letter, i) => {
-        if (
-          i === 0 ||
-          letter.possibleLettersCount === array[0].possibleLettersCount
-        )
-          array.push(letter);
-        return array;
-      }, []);
+    return this.#board.board.flat().reduce((array: Letter[], letter) => {
+      // don't include letters with values
+      if (letter.value) return array;
+
+      if (
+        array.length === 0 ||
+        letter.possibleLettersCount === array[0].possibleLettersCount
+      ) {
+        array.push(letter);
+      }
+
+      if (letter.possibleLettersCount < array[0].possibleLettersCount) {
+        // letter with an even lower count? Replace array with new letter
+        array = [letter];
+      }
+      return array;
+    }, []);
   }
 
   #selectRandomLetterFrom(letterArray: Letter[]): Letter {
@@ -107,7 +112,7 @@ export class Generator {
   #isComplete(): boolean {
     if (
       this.#history.length === this.#size ** 2 &&
-      this.#board.board.flat().every(letter => letter.value !== undefined) &&
+      this.#board.board.flat().every(letter => letter.value) &&
       this.#board.getCompletedWords.length === this.#size * 2
     )
       return true;
@@ -213,7 +218,7 @@ export class Generator {
 
   #handleCountOfZero() {
     // If last move in history has a zero count, remove it from history
-    if (this.#lastMoveInHistory === undefined) return;
+    if (!this.#lastMoveInHistory) return;
     const { rowIndex, colIndex } = this.#validateAndConvertCoord(
       this.#lastMoveInHistory
     );
@@ -232,7 +237,7 @@ export class Generator {
   }
 
   #revert() {
-    if (this.#lastMoveInHistory === undefined) return;
+    if (!this.#lastMoveInHistory) return;
 
     const { rowIndex, colIndex } = this.#validateAndConvertCoord(
       this.#lastMoveInHistory
@@ -260,7 +265,8 @@ export class Generator {
   }
 
   get #lastMoveInHistory(): string | undefined {
-    return this.#history[this.#history.length - 1];
+    // faster then arr[arr.length - 1]
+    return this.#history.slice(-1)[0];
   }
 
   get boardSize(): number {
