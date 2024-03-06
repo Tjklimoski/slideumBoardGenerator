@@ -7,13 +7,14 @@ describe("Board Class", () => {
       const board = new Board();
       const expectedLetter1 = new Letter("00");
       const expectedLetter2 = new Letter("21");
-      expect(board.board.length).toBe(3);
+      expect(board.board).toHaveLength(3);
       expect(board.board[0][0]).toEqual(expectedLetter1);
       expect(board.board[2][1]).toEqual(expectedLetter2);
     });
     test("initalizes correctly sized board", () => {
       const board = new Board(4);
-      expect(board.board.length).toBe(4);
+      expect(board.board).toHaveLength(4);
+      expect(board.getTargetWords("33")).toBeInstanceOf(Object);
     });
   });
 
@@ -56,9 +57,9 @@ describe("Board Class", () => {
       board.board[2][1].assignValue_Random();
       expect(board.getCompletedWords.length).toBe(2);
       const expectedWord =
-        (board.board[0][1].value ? board.board[0][1].value : " ") +
-        (board.board[0][1].value ? board.board[1][1].value : " ") +
-        (board.board[0][1].value ? board.board[2][1].value : " ");
+        (board.board[0][1].value ?? " ") +
+        (board.board[1][1].value ?? " ") +
+        (board.board[2][1].value ?? " ");
       expect(board.getCompletedWords).toContain(expectedWord);
     });
   });
@@ -113,6 +114,10 @@ describe("Board Class", () => {
       );
       expect(() => board.getTargetWords("28")).toThrow(
         "coordinate values [2, 8] can not be greater than board size 3"
+      );
+      const board_s4 = new Board(4);
+      expect(() => board_s4.getTargetWords("14")).toThrow(
+        "coordinate values [1, 4] can not be greater than board size 4"
       );
     });
 
