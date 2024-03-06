@@ -1,4 +1,4 @@
-import { Generator } from "./Generator.js";
+import { Generator } from "./Generator";
 
 const generator = new Generator();
 

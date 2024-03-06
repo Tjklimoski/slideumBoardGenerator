@@ -26,7 +26,7 @@ describe("Letter class", () => {
       expect(letter.colIndex).toBe(2);
     });
 
-    test("initializes full alphabet possibleLetters array", () => {
+    test("initializes full alphabet in possibleLetters array", () => {
       const letter = new Letter("12");
       expect(letter.possibleLetters).toEqual(
         "abcdefghijklmnopqrstuvwxyz".split("")

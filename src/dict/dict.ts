@@ -1,6 +1,6 @@
-import { _0 } from "./indexed/position_0.js";
-import { _1 } from "./indexed/position_1.js";
-import { _2 } from "./indexed/position_2.js";
+import { _0 } from "./indexed/position_0";
+import { _1 } from "./indexed/position_1";
+import { _2 } from "./indexed/position_2";
 
 export interface IndexedDict {
   a: string[];

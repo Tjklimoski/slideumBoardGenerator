@@ -1,4 +1,4 @@
-import { Letter } from "./Letter.js";
+import { Letter } from "./Letter";
 
 type BoardRow = [Letter, Letter, Letter];
 

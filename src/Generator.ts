@@ -1,7 +1,7 @@
-import type { Letter } from "./Letter.js";
-import { Board } from "./Board.js";
-import dict from "./dict/dict.js";
-import type { Dictionary, IndexedDict } from "./dict/dict.js";
+import type { Letter } from "./Letter";
+import { Board } from "./Board";
+import dict from "./dict/dict";
+import type { Dictionary, IndexedDict } from "./dict/dict";
 
 type ResultMatrix = string[][];
 
