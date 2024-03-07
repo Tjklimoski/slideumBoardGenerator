@@ -1,5 +1,5 @@
 // words 5 ch long, organized based on letter at index position 1
-export const S5_1 = {
+export const s5_1 = {
   a: [
     "aahed",
     "aalii",

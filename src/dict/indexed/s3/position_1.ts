@@ -1,7 +1,7 @@
 // organized based on letter in index position 1
 // there are no words with 'q' in index 1.
 
-export const _1 = {
+export const s3_1 = {
   a: [
     "aah",
     "aal",

@@ -1,5 +1,5 @@
 // organized based on letter in index position 0
-export const _0 = {
+export const s3_0 = {
   a: [
     "aah",
     "aal",
