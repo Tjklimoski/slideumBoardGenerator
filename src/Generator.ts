@@ -1,7 +1,7 @@
 import type { Letter } from "./Letter";
 import { Board } from "./Board";
-import dict from "./dict/dict";
-import type { Dictionary, IndexedDict } from "./dict/dict";
+import dictionary from "./dict/dict";
+import type { Dictionary, IndexedDict, Indexes } from "./dict/dict";
 
 export type ResultMatrix = string[][];
 
@@ -187,8 +187,9 @@ export class Generator {
 
       if (firstLetterIndex >= this.#size)
         rej(new Error("Incorrrect word passed"));
-      const dictPositionKey = `_${firstLetterIndex}` as keyof Dictionary;
-      const dictLetterKey = word[
+      const sizeKey = `s${this.#size}` as keyof Dictionary;
+      const positionKey = `_${firstLetterIndex}` as keyof Indexes<number>;
+      const letterKey = word[
         firstLetterIndex
       ].toLowerCase() as keyof IndexedDict;
 
@@ -204,7 +205,7 @@ export class Generator {
       );
 
       // select dictionary and loop over included words
-      dict[dictPositionKey][dictLetterKey].forEach(word => {
+      dictionary[sizeKey]?.[positionKey]?.[letterKey].forEach(word => {
         if (word.match(regexWord)) set.add(word[index].toLowerCase());
       });
 
