@@ -11201,7 +11201,6 @@ export const all = [
   "teste",
   "tests",
   "testy",
-  "têtes",
   "teths",
   "tetra",
   "tetri",
