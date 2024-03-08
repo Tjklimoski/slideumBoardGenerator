@@ -10,8 +10,8 @@ interface AllWords {
 }
 
 interface TargetWords {
-  row: string;
-  col: string;
+  rowWord: string;
+  colWord: string;
 }
 
 export class Board {
@@ -89,8 +89,8 @@ export class Board {
     const allWords = this.allWords();
 
     return {
-      row: allWords.rows[targetLetter.rowIndex],
-      col: allWords.cols[targetLetter.colIndex],
+      rowWord: allWords.rows[targetLetter.rowIndex],
+      colWord: allWords.cols[targetLetter.colIndex],
     };
   }
 }
