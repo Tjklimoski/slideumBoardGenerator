@@ -85,25 +85,12 @@ export class Board {
     return this.#board.flat().some(letter => letter.possibleLettersCount === 0);
   }
 
-  getTargetWords(targetCoords: string): TargetWords {
-    if (targetCoords.length !== 2 || isNaN(parseInt(targetCoords)))
-      throw new Error("coord must be 2 numerical digits long");
-
-    const rowIndex = parseInt(targetCoords[0]);
-    const colIndex = parseInt(targetCoords[1]);
-
-    if (rowIndex >= this.#boardSize || colIndex >= this.#boardSize)
-      throw new Error(
-        `coordinate values [${rowIndex}, ${colIndex}] can not be greater than board size ${
-          this.#boardSize
-        }`
-      );
-
+  getTargetWords(targetLetter: Letter): TargetWords {
     const allWords = this.allWords();
 
     return {
-      row: allWords.rows[rowIndex],
-      col: allWords.cols[colIndex],
+      row: allWords.rows[targetLetter.rowIndex],
+      col: allWords.cols[targetLetter.colIndex],
     };
   }
 }
