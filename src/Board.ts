@@ -16,9 +16,9 @@ interface TargetWords {
 
 export class Board {
   #board: BoardType;
-  #boardSize: number;
+  #boardSize: 3 | 4 | 5;
 
-  constructor(size: number = 3) {
+  constructor(size: 3 | 4 | 5 = 3) {
     this.#boardSize = size;
     this.#board = this.#createBoard();
   }
@@ -28,7 +28,7 @@ export class Board {
     for (let rowIndex = 0; rowIndex < this.#boardSize; rowIndex++) {
       const row: BoardRow = [null!, null!, null!];
       for (let colIndex = 0; colIndex < this.#boardSize; colIndex++) {
-        const letter = new Letter(`${rowIndex}${colIndex}`);
+        const letter = new Letter(`${rowIndex}${colIndex}`, this.#boardSize);
         row[colIndex] = letter;
       }
       board[rowIndex] = row;

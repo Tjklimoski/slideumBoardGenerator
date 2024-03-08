@@ -6,17 +6,25 @@ export class Letter {
   #rowIndex: number;
   #colIndex: number;
 
-  constructor(coord: string) {
+  constructor(coord: string, boardSize: 3 | 4 | 5 = 3) {
     if (coord.length !== 2 || isNaN(parseInt(coord)))
       throw new Error("coord must be 2 numerical digits long");
+
+    const rowIndex = parseInt(coord[0]);
+    const colIndex = parseInt(coord[1]);
+
+    if (rowIndex >= boardSize || colIndex >= boardSize)
+      throw new Error(
+        `coordinate values [${rowIndex}, ${colIndex}] can not be greater than board size ${boardSize}`
+      );
 
     this.#value = undefined;
     this.#possibleLetters = "abcdefghijklmnopqrstuvwxyz".split("");
     this.#coord = coord;
     // use rowIndex when need to know index position of Letter when doing COL word
-    this.#rowIndex = parseInt(coord[0]);
+    this.#rowIndex = rowIndex;
     // use colIndex when need to know index position of Letter when doing ROW word
-    this.#colIndex = parseInt(coord[1]);
+    this.#colIndex = colIndex;
   }
 
   // reset Letter value to undefined, remove Letter value from possibleLetters array.
