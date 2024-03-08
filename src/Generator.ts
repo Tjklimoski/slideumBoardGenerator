@@ -111,12 +111,11 @@ export class Generator {
   }
 
   async #calculatePossibleLetters() {
-    const undefinedLetters = this.#board.board
-      .flat()
-      .filter(letter => letter.value === undefined);
+    const letters = this.#board.board.flat();
 
-    for (let i = 0; i < undefinedLetters.length; i++) {
-      const letter = undefinedLetters[i];
+    for (let i = 0; i < letters.length; i++) {
+      const letter = letters[i];
+      if (letter.value !== undefined) continue;
 
       const { rowWord, colWord } = this.#board.getTargetWords(letter);
 
