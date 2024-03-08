@@ -1,5 +1,6 @@
 import { Generator } from "./Generator";
 
+// Only valid sizes for Generator are 3 - 5
 const generator3 = new Generator();
 const generator4 = new Generator(4);
 const generator5 = new Generator(5);

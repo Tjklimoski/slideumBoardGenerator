@@ -16,7 +16,9 @@ export class Generator {
   #history: string[];
   #board: Board;
 
-  constructor(size: number = 3) {
+  constructor(size: 3 | 4 | 5 = 3) {
+    if (size < 3 || size > 5)
+      throw new Error("Invalid size - must be a number between 3 and 5.");
     this.#size = size;
     this.#history = [];
     this.#board = new Board(this.#size);
