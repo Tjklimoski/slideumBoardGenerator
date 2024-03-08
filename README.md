@@ -35,7 +35,7 @@ npm run start
 
 Output runs in the console.
 
-**Uncomment lines 45-49 in Generator.ts to see the program step through every decision as it fills the board**
+**Uncomment lines 39-43 in Generator.ts to see the program step through every decision as it fills the board**
 
 **Adjust line 4 on index.ts to change which sized board you want generated.**
 
