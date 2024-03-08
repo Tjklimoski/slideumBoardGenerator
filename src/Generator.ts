@@ -13,7 +13,7 @@ interface convertedCoord {
 
 export class Generator {
   #size: 3 | 4 | 5;
-  #history: string[];
+  #history: Letter[];
   #board: Board;
 
   constructor(size: 3 | 4 | 5 = 3) {
@@ -107,8 +107,8 @@ export class Generator {
 
   #assignValue(letter: Letter) {
     letter.assignValue_Random();
-    if (this.#history.includes(letter.coord)) return;
-    this.#history.push(letter.coord);
+    if (this.#history.includes(letter)) return;
+    this.#history.push(letter);
   }
 
   #isComplete(): boolean {
@@ -250,7 +250,7 @@ export class Generator {
     this.#board.board[rowIndex][colIndex].revert();
   }
 
-  get #lastMoveInHistory(): string | undefined {
+  get #lastMoveInHistory(): Letter {
     // faster then arr[arr.length - 1]
     return this.#history.slice(-1)[0];
   }
