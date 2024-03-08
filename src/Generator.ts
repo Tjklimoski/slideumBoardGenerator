@@ -12,7 +12,7 @@ interface convertedCoord {
 }
 
 export class Generator {
-  #size: number;
+  #size: 3 | 4 | 5;
   #history: string[];
   #board: Board;
 
@@ -250,29 +250,12 @@ export class Generator {
     this.#board.board[rowIndex][colIndex].revert();
   }
 
-  #validateAndConvertCoord(coord: string): convertedCoord {
-    if (coord.length !== 2 || isNaN(parseInt(coord)))
-      throw new Error("coord must be 2 numerical digits long");
-
-    const rowIndex = parseInt(coord[0]);
-    const colIndex = parseInt(coord[1]);
-
-    if (rowIndex >= this.#size || colIndex >= this.#size)
-      throw new Error(
-        `coordinate values [${rowIndex}, ${colIndex}] can not be greater than board size ${
-          this.#size
-        }`
-      );
-
-    return { coord, rowIndex, colIndex };
-  }
-
   get #lastMoveInHistory(): string | undefined {
     // faster then arr[arr.length - 1]
     return this.#history.slice(-1)[0];
   }
 
-  get boardSize(): number {
+  get boardSize(): 3 | 4 | 5 {
     return this.#size;
   }
 }
