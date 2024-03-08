@@ -1,24 +1,12 @@
 import { Generator } from "./Generator";
 
 // Only valid sizes for Generator are 3, 4, & 5
-const generator3 = new Generator();
-const generator4 = new Generator(4);
-const generator5 = new Generator(5);
+const size = 3;
 
-console.time("gen 3x3");
-generator3.getBoard().then(result => {
-  console.log("RESULT: ", result);
-  console.timeEnd("gen 3x3");
-});
+const generator = new Generator(size);
 
-console.time("gen 4x4");
-generator4.getBoard().then(result => {
+console.time(`gen ${size}x${size}`);
+generator.getBoard().then(result => {
   console.log("RESULT: ", result);
-  console.timeEnd("gen 4x4");
-});
-
-console.time("gen 5x5");
-generator5.getBoard().then(result => {
-  console.log("RESULT: ", result);
-  console.timeEnd("gen 5x5");
+  console.timeEnd(`gen ${size}x${size}`);
 });
