@@ -5,12 +5,6 @@ import type { Dictionary, IndexedDict, Indexes } from "./dict/dict";
 
 export type ResultMatrix = string[][];
 
-interface convertedCoord {
-  coord: string;
-  rowIndex: number;
-  colIndex: number;
-}
-
 export class Generator {
   #size: 3 | 4 | 5;
   #history: Letter[];
@@ -66,14 +60,9 @@ export class Generator {
   }
 
   #selectLetter(): Letter {
-    if (this.#lastMoveInHistory) {
-      const { rowIndex, colIndex } = this.#validateAndConvertCoord(
-        this.#lastMoveInHistory
-      );
-      const letter = this.#board.board[rowIndex][colIndex];
-      // If last letter in history still has an undefined value, select it again
-      if (!letter.value) return letter;
-    }
+    if (this.#lastMoveInHistory && !this.#lastMoveInHistory.value)
+      return this.#lastMoveInHistory;
+
     return this.#selectRandomLetterFrom(
       this.#lettersWithLowestPossibleLettersCount
     );
@@ -129,17 +118,12 @@ export class Generator {
     for (let i = 0; i < undefinedLetters.length; i++) {
       const letter = undefinedLetters[i];
 
-      const { row: rowWord, col: colWord } = this.#board.getTargetWords(
-        letter.coord
-      );
-      const { rowIndex, colIndex } = this.#validateAndConvertCoord(
-        letter.coord
-      );
+      const { rowWord, colWord } = this.#board.getTargetWords(letter);
 
       // rowWord needs the letters in the COL index position
       // colWord needs the letters in the ROW index position
-      const rowLetterFinder = this.#letterFinder(rowWord, colIndex);
-      const colLetterFinder = this.#letterFinder(colWord, rowIndex);
+      const rowLetterFinder = this.#letterFinder(rowWord, letter.colIndex);
+      const colLetterFinder = this.#letterFinder(colWord, letter.rowIndex);
 
       let possibleLetters: string[] = [];
 
@@ -175,7 +159,8 @@ export class Generator {
       // using Set to prevent duplicate letters
       const set: Set<string> = new Set();
 
-      if (word[index] !== " ") rej(new Error("Incorrect index or word passed"));
+      if (word[index] !== " " || word.length !== this.#size)
+        rej(new Error("Incorrect index or word passed"));
 
       const firstLetterIndex = word.search(/\w/i);
       // firstLetterIndex set to -1 when no letters in word. ex: "   "
@@ -187,8 +172,6 @@ export class Generator {
         res(set);
       }
 
-      if (firstLetterIndex >= this.#size)
-        rej(new Error("Incorrrect word passed"));
       const sizeKey = `s${this.#size}` as keyof Dictionary;
       const positionKey = `_${firstLetterIndex}` as keyof Indexes<number>;
       const letterKey = word[
@@ -221,11 +204,7 @@ export class Generator {
 
   #handleCountOfZero() {
     // If last move in history has a zero count, remove it from history
-    if (!this.#lastMoveInHistory) return;
-    const { rowIndex, colIndex } = this.#validateAndConvertCoord(
-      this.#lastMoveInHistory
-    );
-    if (this.#board.board[rowIndex][colIndex].possibleLettersCount === 0) {
+    if (this.#lastMoveInHistory?.possibleLettersCount === 0) {
       this.#history.pop();
     }
 
@@ -240,17 +219,11 @@ export class Generator {
   }
 
   #revert() {
-    if (!this.#lastMoveInHistory) return;
-
-    const { rowIndex, colIndex } = this.#validateAndConvertCoord(
-      this.#lastMoveInHistory
-    );
-
     // removes the current value from the possibleLetters array, and sets value to undefined
-    this.#board.board[rowIndex][colIndex].revert();
+    this.#lastMoveInHistory?.revert();
   }
 
-  get #lastMoveInHistory(): Letter {
+  get #lastMoveInHistory(): Letter | undefined {
     // faster then arr[arr.length - 1]
     return this.#history.slice(-1)[0];
   }
