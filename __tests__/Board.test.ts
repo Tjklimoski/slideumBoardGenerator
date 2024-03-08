@@ -14,7 +14,6 @@ describe("Board Class", () => {
     test("initalizes correctly sized board", () => {
       const board = new Board(4);
       expect(board.board).toHaveLength(4);
-      expect(board.getTargetWords("33")).toBeInstanceOf(Object);
     });
   });
 
@@ -104,34 +103,17 @@ describe("Board Class", () => {
   });
 
   describe("getTargetWords method", () => {
-    test("throws error on invalid coord input", () => {
-      const board = new Board();
-      expect(() => board.getTargetWords("a1")).toThrow(
-        "coord must be 2 numerical digits long"
-      );
-      expect(() => board.getTargetWords("1")).toThrow(
-        "coord must be 2 numerical digits long"
-      );
-      expect(() => board.getTargetWords("28")).toThrow(
-        "coordinate values [2, 8] can not be greater than board size 3"
-      );
-      const board_s4 = new Board(4);
-      expect(() => board_s4.getTargetWords("14")).toThrow(
-        "coordinate values [1, 4] can not be greater than board size 4"
-      );
-    });
-
     test("returns row word and col word that intersect at target coord", () => {
       const board = new Board();
-      expect(board.getTargetWords("00").col).toBe("   ");
-      expect(board.getTargetWords("00").row).toBe("   ");
+      expect(board.getTargetWords(board.board[0][0]).colWord).toBe("   ");
+      expect(board.getTargetWords(board.board[0][0]).rowWord).toBe("   ");
       board.board[0][1].assignValue_Ordered();
-      expect(board.getTargetWords("00").row).toBe(" a ");
-      expect(board.getTargetWords("00").col).toBe("   ");
-      expect(board.getTargetWords("01").col).toBe("a  ");
+      expect(board.getTargetWords(board.board[0][0]).rowWord).toBe(" a ");
+      expect(board.getTargetWords(board.board[0][0]).colWord).toBe("   ");
+      expect(board.getTargetWords(board.board[0][1]).colWord).toBe("a  ");
       board.board[0][0].assignValue_Ordered();
       board.board[0][2].assignValue_Ordered();
-      expect(board.getTargetWords("00").row).toBe("aaa");
+      expect(board.getTargetWords(board.board[0][0]).rowWord).toBe("aaa");
     });
   });
 });
