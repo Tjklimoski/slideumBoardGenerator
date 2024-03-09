@@ -21,6 +21,9 @@ describe("Letter class", () => {
       expect(() => new Letter("A1")).toThrow(
         "coord must be 2 numerical digits long"
       );
+      expect(() => new Letter("33")).toThrow(
+        "coordinate values [3, 3] can not be equal to or greater than board size 3"
+      );
     });
 
     test("initializes Letter with coord", () => {

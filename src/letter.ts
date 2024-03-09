@@ -15,7 +15,7 @@ export class Letter {
 
     if (rowIndex >= boardSize || colIndex >= boardSize)
       throw new Error(
-        `coordinate values [${rowIndex}, ${colIndex}] can not be greater than board size ${boardSize}`
+        `coordinate values [${rowIndex}, ${colIndex}] can not be equal to or greater than board size ${boardSize}`
       );
 
     this.#value = undefined;
