@@ -1,8 +1,8 @@
 {
-  "name": "backend",
+  "name": "slideum_board_generator",
   "version": "1.0.0",
-  "description": "",
-  "main": "src/index.ts",
+  "description": "builds letter based grid of 3x3, 4x4, or 5x5 size, of interconected unique words",
+  "main": "src/Generator.ts",
   "scripts": {
     "test": "jest",
     "build": "tsc",
