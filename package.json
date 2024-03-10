@@ -1,6 +1,6 @@
 {
   "name": "slideum_board_generator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "builds letter based grid of 3x3, 4x4, or 5x5 size, of interconected unique words",
   "main": "dist/src/Generator.js",
   "types": "dist/src/Generator.d.ts",
